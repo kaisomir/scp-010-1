@@ -3,6 +3,9 @@ https://scp-wiki.wikidot.com/scp-010
 
 TL;DR SCP-010 is a set of movement-controlling collars and their singular remote.
 
+Requirements:
+    py-cord 2.0.0b1 or higher
+
 This bot pings one user repeatedly, can be paused and stopped by said user, as well as configurable admins and roles.
 Only configured users and roles may initiate pinging.
 
