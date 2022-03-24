@@ -6,46 +6,65 @@ bot = discord.Bot()
 
 config = json.loads(open('config.json', 'r').read())
 token = config['token']
-users = config['users']          # UUIDs with perms
-p_perms = config['ping_perms']  # role IDs with perms
-admins = config['admins']        # UUIDs with pause perms
-a_perms = config['admin_roles']  # role IDs with pause perms
-channel = config['channel']      # target channel/thread ID - redirects flood
-guild = config['guild']          # server (bot is currently single-server only)
-target = config['target']        # target user
-variants = config['variants']    # fancy text for target
-admins.append(target)            # I will not support nonconsensual pinging
+
+users, p_perms = config['users'], config['ping_perms']
+admins, a_perms = config['admins'], config['admin_roles']
+b_users, b_roles = config['blacklist'], config['blacklist_roles']
+guild, channel = config['guild'], config['channel']
+target, variants = config['target'], config['variants']
+admins.append(target)
+users.append(target)
 
 calluser = None  # test initialiser
 testing = False  # test ongoing
 paused = False   # testing halted
 
 
+def p_check_perms(ctx):
+    global users, p_perms, b_users, b_roles
+
+    if ctx.interaction.user.id in b_users:
+        return False
+    for role in b_roles:
+        if ctx.interaction.user.get_role(role):
+            return False
+    if ctx.interaction.user.id in users:
+        return True
+    for role in p_perms:
+        if ctx.interaction.user.get_role(role):
+            perms = True
+    return perms
+
+
+def a_check_perms(ctx):
+    global admins, a_perms
+    if ctx.interaction.user.id in admins:
+        return True
+    for role in a_perms:
+        if ctx.guild.get_role(role) in ctx.interaction.user.roles:
+            return True
+    return False
+
+
 @bot.slash_command(guild_ids=[guild])
 async def test(ctx):
     print(f'Command test called by {ctx.interaction.user}')
-    global calluser, testing, paused, variants, p_perms
-    if testing:
-        await ctx.respond('Testing is already ongoing.')
-        return
-    elif ctx.channel.id != channel:
+    global calluser, testing, paused, variants, channel
+
+    if ctx.channel.id != channel:
         await ctx.respond(f'This command only works in <#{channel}>.')
+        return
+    elif testing:
+        await ctx.respond('Testing is already ongoing.')
         return
     elif paused:
         await ctx.respond('Testing has been temporarily halted. '
                           'Please check back later.')
         return
 
-    perms = False
-    if ctx.interaction.user.id in users:
-        perms = True
-    else:
-        for role in p_perms:
-            if ctx.interaction.user.get_role(role):
-                perms = True
-                break
+    perms = p_check_perms(ctx)
 
-    if perms and not calluser:
+    if perms and calluser is None:
         calluser = ctx.interaction.user
 
         print(f'User {calluser.name} started testing.')
@@ -68,20 +87,16 @@ async def test(ctx):
 @bot.slash_command(guild_ids=[guild])
 async def stop(ctx):
     print(f'Command stop called by {ctx.interaction.user}')
-    global testing, admins, a_perms
+    global testing, channel
 
-    if not testing:
+    if ctx.channel.id != channel:
+        await ctx.respond(f'This command only works in <#{channel}>.')
+        return
+    elif not testing:
         await ctx.respond('There is currently no ongoing testing.')
         return
 
-    perms = False
-    if ctx.interaction.user == calluser or ctx.interaction.user.id in admins:
-        perms = True
-    else:
-        for role in a_perms:
-            if ctx.guild.get_role(role) in ctx.interaction.user.roles:
-                perms = True
-                break
+    perms = p_check_perms(ctx)
 
     if perms and testing:
         print(f'Testing stopped by user {ctx.interaction.user.name}')
@@ -94,20 +109,16 @@ async def stop(ctx):
 @bot.slash_command(guild_ids=[guild])
 async def pause(ctx):
     print(f'Command pause called by {ctx.interaction.user}')
-    global admins, a_perms, paused, testing
+    global paused, testing, channel
 
-    if paused:
+    if ctx.channel.id != channel:
+        await ctx.respond(f'This command only works in <#{channel}>.')
+        return
+    elif paused:
         await ctx.respond('Testing is already halted.')
         return
 
-    perms = False
-    if ctx.interaction.user.id in admins:
-        perms = True
-    else:
-        for role in a_perms:
-            if ctx.guild.get_role(role) in ctx.interaction.user.roles:
-                perms = True
-                break
+    perms = a_check_perms(ctx)
 
     if perms:
         testing = False
@@ -121,20 +132,16 @@ async def pause(ctx):
 @bot.slash_command(guild_ids=[guild])
 async def unpause(ctx):
     print(f'Command unpause called by {ctx.interaction.user}')
-    global admins, a_perms, paused, testing
+    global paused, testing, channel
 
-    if not paused:
+    if ctx.channel.id != channel:
+        await ctx.respond(f'This command only works in <#{channel}>.')
+        return
+    elif not paused:
         await ctx.respond('Testing is not halted.')
         return
 
-    perms = False
-    if ctx.interaction.user.id in admins:
-        perms = True
-    else:
-        for role in a_perms:
-            if ctx.guild.get_role(role) in ctx.interaction.user.roles:
-                perms = True
-                break
+    perms = a_check_perms(ctx)
 
     if perms:
         paused = False

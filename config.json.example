@@ -4,7 +4,9 @@
     "ping_perms": [],
     "admins": [],
     "admin_roles": [],
-    "channel": null,
+    "blacklist": [],
+    "blacklist_roles": [],
     "guild": null,
+    "channel": null,
     "target": null
 }
