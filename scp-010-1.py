@@ -7,7 +7,7 @@ bot = discord.Bot()
 config = json.loads(open('config.json', 'r').read())
 token = config['token']
 users = config['users']          # UUIDs with perms
-s_perms = config['shock_perms']  # role IDs with perms
+p_perms = config['ping_perms']  # role IDs with perms
 admins = config['admins']        # UUIDs with pause perms
 a_perms = config['admin_roles']  # role IDs with pause perms
 channel = config['channel']      # target channel/thread ID - redirects flood
@@ -24,7 +24,7 @@ paused = False   # testing halted
 @bot.slash_command(guild_ids=[guild])
 async def test(ctx):
     print(f'Command test called by {ctx.interaction.user}')
-    global calluser, testing, paused, variants
+    global calluser, testing, paused, variants, p_perms
     if testing:
         await ctx.respond('Testing is already ongoing.')
         return
@@ -40,7 +40,7 @@ async def test(ctx):
     if ctx.interaction.user.id in users:
         perms = True
     else:
-        for role in s_perms:
+        for role in p_perms:
             if ctx.interaction.user.get_role(role):
                 perms = True
                 break
