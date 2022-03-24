@@ -8,5 +8,6 @@
     "blacklist_roles": [],
     "guild": null,
     "channel": null,
-    "target": null
+    "target": null,
+    "variants": []
 }
