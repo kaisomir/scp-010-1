@@ -87,7 +87,7 @@ async def test(ctx):
 @bot.slash_command(guild_ids=[guild])
 async def stop(ctx):
     print(f'Command stop called by {ctx.interaction.user}')
-    global testing, channel
+    global testing, channel, calluser
 
     if ctx.channel.id != channel:
         await ctx.respond(f'This command only works in <#{channel}>.')
@@ -102,6 +102,7 @@ async def stop(ctx):
         print(f'Testing stopped by user {ctx.interaction.user.name}')
         testing = False
         await ctx.respond('Testing has ceased.')
+        calluser = None
     else:
         await ctx.respond('You have no power here. Testing must go on.')
 
