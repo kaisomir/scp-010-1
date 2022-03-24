@@ -46,7 +46,9 @@ def a_check_perms(ctx):
     return False
 
 
-@bot.slash_command(guild_ids=[guild])
+@bot.slash_command(guild_ids=[guild],
+                   description='Begin test.'
+                   )
 async def test(ctx):
     print(f'Command test called by {ctx.interaction.user}')
     global calluser, testing, paused, variants, channel
@@ -84,7 +86,9 @@ async def test(ctx):
         await ctx.send(f'<@{target}>')
 
 
-@bot.slash_command(guild_ids=[guild])
+@bot.slash_command(guild_ids=[guild],
+                   description='Stop ongoing test.'
+                   )
 async def stop(ctx):
     print(f'Command stop called by {ctx.interaction.user}')
     global testing, channel, calluser
@@ -107,7 +111,9 @@ async def stop(ctx):
         await ctx.respond('You have no power here. Testing must go on.')
 
 
-@bot.slash_command(guild_ids=[guild])
+@bot.slash_command(guild_ids=[guild],
+                   description='Temporarily halt testing.'
+                   )
 async def pause(ctx):
     print(f'Command pause called by {ctx.interaction.user}')
     global paused, testing, channel
@@ -130,7 +136,9 @@ async def pause(ctx):
         await ctx.respond('You may not halt testing.')
 
 
-@bot.slash_command(guild_ids=[guild])
+@bot.slash_command(guild_ids=[guild],
+                   description='Resume testing.'
+                   )
 async def unpause(ctx):
     print(f'Command unpause called by {ctx.interaction.user}')
     global paused, testing, channel
