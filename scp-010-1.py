@@ -146,7 +146,7 @@ async def unpause(ctx):
     if perms:
         paused = False
         print(f'Testing unpaused by {ctx.interaction.user}')
-        ctx.respond('Testing resumed.')
+        await ctx.respond('Testing resumed.')
     else:
         await ctx.respond('You may not resume testing.')
 
