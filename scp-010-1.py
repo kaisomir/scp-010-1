@@ -22,7 +22,8 @@ paused = False   # testing halted
 
 
 @bot.slash_command(guild_ids=[guild])
-async def kill(ctx):
+async def test(ctx):
+    print(f'Command test called by {ctx.interaction.user}')
     global calluser, testing, paused, variants
     if testing:
         await ctx.respond('Testing is already ongoing.')
@@ -47,7 +48,7 @@ async def kill(ctx):
     if perms and not calluser:
         calluser = ctx.interaction.user
 
-        print(f'Starting with user {calluser.name}')
+        print(f'User {calluser.name} started testing.')
 
         choice = random.randint(2, 7)
         variants = []
@@ -67,6 +68,7 @@ async def kill(ctx):
 
 @bot.slash_command(guild_ids=[guild])
 async def stop(ctx):
+    print(f'Command stop called by {ctx.interaction.user}')
     global testing, admins, a_perms
 
     if not testing:
@@ -92,6 +94,7 @@ async def stop(ctx):
 
 @bot.slash_command(guild_ids=[guild])
 async def pause(ctx):
+    print(f'Command pause called by {ctx.interaction.user}')
     global admins, a_perms, paused, testing
 
     if paused:
@@ -110,12 +113,14 @@ async def pause(ctx):
     if perms:
         testing = False
         paused = True
+        print(f'Testing paused by {ctx.interaction.user}')
     else:
         await ctx.respond('You may not halt testing.')
 
 
 @bot.slash_command(guild_ids=[guild])
 async def unpause(ctx):
+    print(f'Command unpause called by {ctx.interaction.user}')
     global admins, a_perms, paused, testing
 
     if not paused:
@@ -133,6 +138,7 @@ async def unpause(ctx):
 
     if perms:
         paused = False
+        print(f'Testing unpaused by {ctx.interaction.user}')
     else:
         await ctx.respond('You may not resume testing.')
 
