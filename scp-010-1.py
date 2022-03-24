@@ -51,7 +51,6 @@ async def test(ctx):
         print(f'User {calluser.name} started testing.')
 
         choice = random.randint(2, 7)
-        variants = []
         variant = variants[choice-2]
         await ctx.respond(f'Testing with SCP-010-{choice} on '
                           f'<@{target}> (species {variant[0]}, '
