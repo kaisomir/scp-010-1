@@ -32,8 +32,7 @@ def p_check_perms(ctx):
         return True
     for role in p_perms:
         if ctx.interaction.user.get_role(role):
-            perms = True
-    return perms
+            return True
 
 
 def a_check_perms(ctx):
