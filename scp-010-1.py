@@ -104,8 +104,8 @@ async def stop(ctx):
     if perms and testing:
         print(f'Testing stopped by user {ctx.interaction.user.name}')
         testing = False
-        await ctx.respond('Testing has ceased.')
         calluser = None
+        await ctx.respond('Testing has ceased.')
     else:
         await ctx.respond('You have no power here. Testing must go on.')
 
@@ -115,7 +115,7 @@ async def stop(ctx):
                    )
 async def pause(ctx):
     print(f'Command pause called by {ctx.interaction.user}')
-    global paused, testing, channel
+    global paused, testing, channel, calluser
 
     if ctx.channel.id != channel:
         await ctx.respond(f'This command only works in <#{channel}>.')
@@ -129,6 +129,7 @@ async def pause(ctx):
     if perms:
         testing = False
         paused = True
+        calluser = None
         print(f'Testing paused by {ctx.interaction.user}')
         await ctx.respond('Testing halted.')
     else:
